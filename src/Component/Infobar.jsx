@@ -9,7 +9,7 @@ export default function Infobar() {
   const navigate = useNavigate();
 
   const handlelogout = () => {
-    localStorage.removeItem("jwt");
+    localStorage.clear();
     navigate("/login");
   };
   return (

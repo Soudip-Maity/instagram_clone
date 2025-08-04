@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import Sidenavbar from "./Sidenavbar";
 import Infobar from "./Infobar";
 import { Button, TextField } from "@mui/material";
@@ -6,10 +6,38 @@ import Snackbar from "@mui/material/Snackbar";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { Context } from "../App";
+import { useNavigate } from "react-router-dom";
+
 export default function Createpost() {
         const {setpostform,postform,post,setpost}=useContext(Context)
+      const [open, setOpen] = React.useState(false);
+      const [error, seterror] = useState("");
     
     const token = localStorage.getItem("jwt")
+      const navigate = useNavigate();
+    
+      const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
+
+    const action = (
+    <React.Fragment>
+      <Button color="secondary" size="small" onClick={handleClose}>
+        UNDO
+      </Button>
+      <IconButton
+        size="small"
+        aria-label="close"
+        color="inherit"
+        onClick={handleClose}
+      >
+        <CloseIcon fontSize="small" />
+      </IconButton>
+    </React.Fragment>
+  );
 
 const handlesetpost=(e)=>{
     console.log(e);
@@ -44,12 +72,27 @@ const handlesetpost=(e)=>{
     fetch("http://localhost:1337/api/posts", requestOptions)
       .then((response) => response.json())
       .then((result) =>{
+        console.log(result);
+        if (result.error) {
+          seterror(result.error.message);
+          setOpen(true);
+        } else{
         console.log("Post created:", result);
         setpostform({ title: "", content: "" }); 
+          navigate("/");
+        }
       })
-      .catch((error) => console.error(error));
+      .catch((error) => {
+        seterror(error);
+        setOpen(true);
+      });
   };
 
+
+//    .then((result) =>{
+//         console.log("Post created:", result);
+//         setpostform({ title: "", content: "" }); 
+//       })
   return (
     <div style={{ display: "flex", boxSizing: "border-box" }}>
       <Sidenavbar />
@@ -77,6 +120,13 @@ const handlesetpost=(e)=>{
             gap: "20px",
           }}
         >
+               <Snackbar
+                          open={open}
+                          autoHideDuration={6000}
+                          onClose={handleClose}
+                          message={error}
+                          action={action}
+                        />
           <TextField
             size="small"
             label="Title"

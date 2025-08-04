@@ -76,6 +76,7 @@ export default function Register() {
           setOpen(true);
         } else if (result.jwt) {
           localStorage.setItem("jwt", result.jwt);
+          localStorage.setItem("username", result.user.username);
           navigate("/");
         }
       })
