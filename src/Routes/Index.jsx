@@ -1,20 +1,14 @@
 import React from 'react'
-import {
-  type RouteConfig,
-  route,
-  index,
-  layout,
-  prefix,
-} from "@react-router/dev/routes";
+import { Route, Routes } from 'react-router-dom'
+import Home from '../Pages/Home'
+
+
+
 
 export default function Index() {
   return (
-  index("../Pages/home.jsx"),
-
-  layout("./auth/layout.tsx", [
-    route("login", "./auth/login.tsx"),
-    route("register", "./auth/register.tsx"),
-  ])
-
-  );
+    <div>
+    
+    </div>  
+  )
 }
