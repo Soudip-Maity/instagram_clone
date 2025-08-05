@@ -7,6 +7,10 @@ import Loginpage from "./Pages/Loginpage"
 import Register from "./Pages/Register"
 import Createpost from "./Component/Createpost";
 import { createContext, useState } from "react";
+import Editpost from "./Component/Editpost";
+
+
+
 export const Context = createContext();
 function App() {
   const [post,setpost]=useState([])
@@ -21,6 +25,7 @@ function App() {
           <Route path='/login' element={<Loginpage/>}/>
           <Route path='/register' element={<Register/>}/>
           <Route path='/createpost' element={<Createpost/>}/>
+          <Route path='/editpost' element={<Editpost/>}/>
           
       </Routes>
 </Context.Provider>

@@ -1,21 +1,36 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Sidenavbar from "./Sidenavbar";
 import Infobar from "./Infobar";
-import { Button, TextField } from "@mui/material";
 import Snackbar from "@mui/material/Snackbar";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { Context } from "../App";
+import { Button, TextField } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { Context } from "../App";
 
-export default function Createpost() {
-  const userid= localStorage.getItem("userid")
+export default function Editpost() {
+    const documentId= localStorage.getItem("Edit_documentId")
         const {setpostform,postform,post,setpost}=useContext(Context)
-      const [open, setOpen] = React.useState(false);
+
+  const [open, setOpen] = React.useState(false);
       const [error, seterror] = useState("");
     
     const token = localStorage.getItem("jwt")
       const navigate = useNavigate();
+
+useEffect(() => {
+  const currentPost = post.find((p) => p.documentId === documentId);
+  if (currentPost) {
+    setpostform({
+      title: currentPost.title,
+      content: currentPost.content,
+    });
+  }
+}, [documentId, post,setpostform]);
+
+
+
+
     
       const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -40,6 +55,7 @@ export default function Createpost() {
     </React.Fragment>
   );
 
+
 const handlesetpost=(e)=>{
     console.log(e);
 
@@ -48,53 +64,48 @@ const handlesetpost=(e)=>{
     setpostform({ ...postform, [e.target.name]: e.target.value });
 }
 
-  const handlecreatepost = () => {
+
+
+  const handlepostedit = (documentId) => {
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    myHeaders.append(
-      "Authorization",
-      `Bearer ${token}`
-    );
+    myHeaders.append("Authorization", `Bearer ${token}`);
 
     const raw = JSON.stringify({
       data: {
-        user: userid,
+        user: 2,
         title: postform.title,
         content: postform.content,
       },
     });
 
     const requestOptions = {
-      method: "POST",
+      method: "PUT",
       headers: myHeaders,
       body: raw,
       redirect: "follow",
     };
 
-    fetch("http://localhost:1337/api/posts", requestOptions)
+    fetch(
+    `  http://localhost:1337/api/posts/${documentId}`,
+      requestOptions
+    )
       .then((response) => response.json())
-      .then((result) =>{
-        console.log(result);
-        if (result.error) {
+      .then((result) =>{ if (result.error) {
           seterror(result.error.message);
           setOpen(true);
         } else{
-        console.log("Post created:", result);
+            console.log(result)
         setpostform({ title: "", content: "" }); 
-          navigate("/");
-        }
-      })
+
+           navigate("/");
+        }})
       .catch((error) => {
         seterror(error);
         setOpen(true);
       });
   };
 
-
-//    .then((result) =>{
-//         console.log("Post created:", result);
-//         setpostform({ title: "", content: "" }); 
-//       })
   return (
     <div style={{ display: "flex", boxSizing: "border-box" }}>
       <Sidenavbar />
@@ -122,32 +133,34 @@ const handlesetpost=(e)=>{
             gap: "20px",
           }}
         >
-               <Snackbar
-                          open={open}
-                          autoHideDuration={6000}
-                          onClose={handleClose}
-                          message={error}
-                          action={action}
-                        />
+          <Snackbar
+            open={open}
+            autoHideDuration={6000}
+            onClose={handleClose}
+            message={error}
+            action={action}
+          />
           <TextField
             size="small"
             label="Title"
-            //  sx={{backgroundColor:"rgb(54 54 54)",color:"white",borderRadius:"5px",}}
             value={postform.title}
-             name="title"
-             onChange={handlesetpost}
+            name="title"
+            onChange={handlesetpost}
           />
           <TextField
             size="small"
             label="Content"
             value={postform.content}
-             name="content"
-             onChange={handlesetpost}
-            //    sx={{backgroundColor:"rgb(54 54 54)",color:"white",borderRadius:"5px",}}
+            name="content"
+            onChange={handlesetpost}
           />
 
-
-          <Button variant="contained" onClick={handlecreatepost}>create</Button>
+          <Button
+            variant="contained"
+            onClick={() => handlepostedit(documentId)}
+          >
+            update
+          </Button>
         </div>
       </div>
 

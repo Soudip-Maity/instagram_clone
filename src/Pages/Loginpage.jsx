@@ -83,6 +83,7 @@ export default function Loginpage() {
         } else if (result.jwt||result.user) {
           localStorage.setItem("jwt", result.jwt);
           localStorage.setItem("username", result.user.username);
+          localStorage.setItem("userid", result.user.id);
           navigate("/");
         }
       })
@@ -113,8 +114,11 @@ export default function Loginpage() {
           display: "flex",
           justifyContent: "space-evenly",
           flexDirection: "column",
+          // alignItems:"center"
         }}
       >
+
+         <h1 style={{ color: "#833ab4",width:"100%",textAlign:"center" }}> 𝓲𝓷𝓼𝓽𝓪𝓰𝓻𝓪𝓶</h1>
         <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
           <div>
             <Snackbar

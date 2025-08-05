@@ -21,13 +21,16 @@ export default function Sidenavbar() {
         fontSize: "25px",
       }}
     >
-      <h4 style={{ color: "white" }}> 𝓲𝓷𝓼𝓽𝓪𝓰𝓻𝓪𝓶</h4>
+      <h4 style={{   background: "linear-gradient(45deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5)",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    fontWeight: "bold",}}> 𝓲𝓷𝓼𝓽𝓪𝓰𝓻𝓪𝓶</h4>
 
       <div
         style={{
           boxSizing: "border-box",
           width: "100%",
-
+          padding:"20px",
           backgroundColor: "black",
           display: "flex",
           flexDirection: "column",
@@ -37,20 +40,29 @@ export default function Sidenavbar() {
         }}
       >
         <Link to={"/"}>
-        <Button>
-          <HomeIcon color="primary" fontsize="large" />
+        <Button  sx={{color:"white ",display:"flex",justifyContent:"space-between",width:"120px", transition: "background-color 0.3s ease ", '&:hover': {
+              color: 'white',          
+              backgroundColor: ' #565656ff',  
+            }}}> 
+          <HomeIcon sx={{color:"white"}} fontsize="large" />
           Home
         </Button>
         </Link>
     
-        <Button>
-          <SearchIcon color="error" fontsize="large" />
+        <Button  sx={{color:"white ",display:"flex",justifyContent:"space-between",width:"120px", transition: "background-color 0.3s ease ",  '&:hover': {
+              color: 'white',          
+              backgroundColor: ' #565656ff',  
+            }}}>
+          <SearchIcon sx={{color:"white"}} fontsize="large" />
           search
         </Button>
 
-            <Link to={"/createpost"}>
-             <Button>
-          <AddBoxIcon color="error" fontsize="large" />
+            <Link to={"/createpost"} style={{textDecoration:"none"}}>
+             <Button sx={{color:"white ",display:"flex",justifyContent:"space-between",width:"120px", transition: "background-color 0.3s ease ",  '&:hover': {
+              color: 'white',          
+              backgroundColor: ' #565656ff',  
+            }}}>
+          <AddBoxIcon sx={{color:"white"}} fontsize="large" />
           create
         </Button>
         </Link>
