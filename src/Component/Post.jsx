@@ -1,5 +1,5 @@
 import { Button } from "@mui/material";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { Context } from "../App";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -7,9 +7,12 @@ import { Link } from "react-router-dom";
 import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 import Favorite from "@mui/icons-material/Favorite";
 import Checkbox from "@mui/material/Checkbox";
+import InfoOutlineIcon from '@mui/icons-material/InfoOutline';
+import PostInfo from "./PostInfo";
+
 export default function Post() {
   const jwts = localStorage.getItem("jwt");
-  const { post, setpost } = useContext(Context);
+  const { post, setpost,setOpeninfo,setsinglepostinfo } = useContext(Context);
 
   useEffect(() => {
     console.log("post updated....");
@@ -57,6 +60,27 @@ export default function Post() {
       .catch((error) => console.error(error));
   };
 
+
+  
+   const handle_get_single_post_info=(documentId)=>{
+   setOpeninfo(true);
+    const myHeaders = new Headers();
+myHeaders.append("Authorization", `Bearer ${jwts}`);
+
+const requestOptions = {
+  method: "GET",
+  headers: myHeaders,
+  redirect: "follow"
+};
+
+fetch(`http://localhost:1337/api/posts/${documentId}`, requestOptions)
+  .then((response) => response.json())
+  .then((result) => setsinglepostinfo(result.data))
+  .catch((error) => console.error(error));
+   }
+
+
+
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
   return (
     <div
@@ -102,6 +126,7 @@ export default function Post() {
               flexDirection: "column",
               alignContent: "center",
               borderBottom: ".5px solid white ",
+              cursor:"pointer"
             }}
           >
             {console.log(p)}
@@ -122,17 +147,21 @@ export default function Post() {
                 </Link>
 
                 <Button onClick={() => handlepostdelete(p.documentId)}>
-                  <DeleteIcon sx={{ color: "white" }} />
+                  <DeleteIcon sx={{ color: "red" }} />
                 </Button>
+
+              
+                  <Button onClick={()=>handle_get_single_post_info(p.documentId)}>
+                    <InfoOutlineIcon color="info"/>
+                </Button>
+           
+              
               </div>
+
             </div>
             <div style={{ backgroundColor: "white ", padding: "5px", }}>
               {p.content}
-
-             
-
-             
-
+              <PostInfo/>
             </div>
             <div style={{ backgroundColor: "green ", padding: "5px",display:"flex",justifyContent:"space-between",flexDirection:"column",alignItems:"flex-start" }}>
                <Checkbox

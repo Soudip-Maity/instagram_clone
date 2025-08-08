@@ -10,8 +10,11 @@ import { Context } from "../App";
 
 export default function Editpost() {
     const documentId= localStorage.getItem("Edit_documentId")
-        const {setpostform,postform,post,setpost}=useContext(Context)
-
+        const {post,}=useContext(Context)
+  const[editpostfrom,seteditpostfrom]=useState({
+      title: "",
+      content: ""
+    })
   const [open, setOpen] = React.useState(false);
       const [error, seterror] = useState("");
     
@@ -21,12 +24,12 @@ export default function Editpost() {
 useEffect(() => {
   const currentPost = post.find((p) => p.documentId === documentId);
   if (currentPost) {
-    setpostform({
+    seteditpostfrom({
       title: currentPost.title,
       content: currentPost.content,
     });
   }
-}, [documentId, post,setpostform]);
+}, [documentId, post,seteditpostfrom]);
 
 
 
@@ -61,7 +64,7 @@ const handlesetpost=(e)=>{
 
     console.log(e.target.name);
 
-    setpostform({ ...postform, [e.target.name]: e.target.value });
+    seteditpostfrom({ ...editpostfrom, [e.target.name]: e.target.value });
 }
 
 
@@ -74,8 +77,8 @@ const handlesetpost=(e)=>{
     const raw = JSON.stringify({
       data: {
         user: 2,
-        title: postform.title,
-        content: postform.content,
+        title: editpostfrom.title,
+        content: editpostfrom.content,
       },
     });
 
@@ -96,7 +99,7 @@ const handlesetpost=(e)=>{
           setOpen(true);
         } else{
             console.log(result)
-        setpostform({ title: "", content: "" }); 
+        seteditpostfrom({ title: "", content: "" }); 
 
            navigate("/");
         }})
@@ -143,14 +146,14 @@ const handlesetpost=(e)=>{
           <TextField
             size="small"
             label="Title"
-            value={postform.title}
+            value={editpostfrom.title}
             name="title"
             onChange={handlesetpost}
           />
           <TextField
             size="small"
             label="Content"
-            value={postform.content}
+            value={editpostfrom.content}
             name="content"
             onChange={handlesetpost}
           />

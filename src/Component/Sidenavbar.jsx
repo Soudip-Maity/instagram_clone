@@ -4,14 +4,18 @@ import SearchIcon from "@mui/icons-material/Search";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
+// import BottomNavigation from '@mui/material/BottomNavigation';
+// import BottomNavigationAction from '@mui/material/BottomNavigationAction';
+
 export default function Sidenavbar() {
+    // const [value, setValue] = React.useState(0);
   return (
     <div
       style={{
         boxSizing: "border-box",
         width: "15%",
         height: "100vh",
-        padding: "10px 20px",
+        padding: "10px 10px",
         backgroundColor: "black",
         borderRight: ".5px solid white ",
         display: "flex",
@@ -30,7 +34,7 @@ export default function Sidenavbar() {
         style={{
           boxSizing: "border-box",
           width: "100%",
-          padding:"20px",
+          // padding:"10px",
           backgroundColor: "black",
           display: "flex",
           flexDirection: "column",
@@ -39,8 +43,24 @@ export default function Sidenavbar() {
           fontSize: "40px",
         }}
       >
-        <Link to={"/"}>
-        <Button  sx={{color:"white ",display:"flex",justifyContent:"space-between",width:"120px", transition: "background-color 0.3s ease ", '&:hover': {
+            {/* <BottomNavigation
+            style={{display:"flex",justifyContent:"flex-start",flexDirection:"column",gap:"50px"}}
+        showLabels
+        value={value}
+
+        onChange={(event, newValue) => {
+          setValue(newValue);
+        }}
+      >
+        <BottomNavigationAction label="Home" icon={<HomeIcon sx={{color:"white",background:"transparent "}} fontsize="large" />} />
+        <BottomNavigationAction label="Search" icon={<SearchIcon sx={{color:"white"}} fontsize="large" />} />
+        <BottomNavigationAction label="Create" icon={<AddBoxIcon  sx={{color:"white"}} fontsize="large" />} />
+      </BottomNavigation> */}
+
+
+
+        <Link to={"/"} style={{textDecoration:"none",width:"100%"}}>
+        <Button  sx={{color:"white ",display:"flex",gap:"20px",width:"100%", transition: "background-color 0.3s ease ", '&:hover': {
               color: 'white',          
               backgroundColor: ' #565656ff',  
             }}}> 
@@ -49,7 +69,7 @@ export default function Sidenavbar() {
         </Button>
         </Link>
     
-        <Button  sx={{color:"white ",display:"flex",justifyContent:"space-between",width:"120px", transition: "background-color 0.3s ease ",  '&:hover': {
+        <Button  sx={{color:"white ",display:"flex",gap:"20px",width:"100%", transition: "background-color 0.3s ease ",  '&:hover': {
               color: 'white',          
               backgroundColor: ' #565656ff',  
             }}}>
@@ -57,8 +77,8 @@ export default function Sidenavbar() {
           search
         </Button>
 
-            <Link to={"/createpost"} style={{textDecoration:"none"}}>
-             <Button sx={{color:"white ",display:"flex",justifyContent:"space-between",width:"120px", transition: "background-color 0.3s ease ",  '&:hover': {
+            <Link to={"/createpost"} style={{textDecoration:"none",width:"100%"}}>
+             <Button sx={{color:"white ",display:"flex",gap:"20px",width:"100%", transition: "background-color 0.3s ease ",  '&:hover': {
               color: 'white',          
               backgroundColor: ' #565656ff',  
             }}}>

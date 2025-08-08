@@ -8,14 +8,14 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 
 export default function Loginpage() {
-  const jwts= localStorage.getItem("jwt")
+  const jwts = localStorage.getItem("jwt");
   const [userdetails, setuserdetails] = useState({ email: "", password: "" });
   const [error, seterror] = useState("");
 
   const [open, setOpen] = React.useState(false);
 
   useEffect(() => {
-    if(jwts) navigate("/");
+    if (jwts) navigate("/");
   }, []);
 
   const handleClose = (event, reason) => {
@@ -80,7 +80,7 @@ export default function Loginpage() {
         if (result.error) {
           seterror(result.error.message);
           setOpen(true);
-        } else if (result.jwt||result.user) {
+        } else if (result.jwt || result.user) {
           localStorage.setItem("jwt", result.jwt);
           localStorage.setItem("username", result.user.username);
           localStorage.setItem("userid", result.user.id);
@@ -117,8 +117,20 @@ export default function Loginpage() {
           // alignItems:"center"
         }}
       >
-
-         <h1 style={{ color: "#833ab4",width:"100%",textAlign:"center" }}> 𝓲𝓷𝓼𝓽𝓪𝓰𝓻𝓪𝓶</h1>
+        <h1
+          style={{
+            background:
+            "linear-gradient(45deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            fontWeight: "bold",
+            display: "flex",
+            justifyContent: "center",
+            width: "100%",
+          }}
+        >
+          𝓲𝓷𝓼𝓽𝓪𝓰𝓻𝓪𝓶
+        </h1>
         <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
           <div>
             <Snackbar
@@ -139,7 +151,7 @@ export default function Loginpage() {
             onChange={handlesetdetails}
           />
           <TextField
-            required={true} 
+            required={true}
             type="password"
             size="small"
             label="PASSWORD"
