@@ -7,12 +7,15 @@ import { Link } from "react-router-dom";
 import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 import Favorite from "@mui/icons-material/Favorite";
 import Checkbox from "@mui/material/Checkbox";
-import InfoOutlineIcon from '@mui/icons-material/InfoOutline';
 import PostInfo from "./PostInfo";
-
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import All_users from "../Layout/All_users";
 export default function Post() {
   const jwts = localStorage.getItem("jwt");
-  const { post, setpost,setOpeninfo,setsinglepostinfo } = useContext(Context);
+  const username = localStorage.getItem("username");
+
+  const { post, setpost, setOpeninfo, setsinglepostinfo } =
+    useContext(Context);
 
   useEffect(() => {
     console.log("post updated....");
@@ -33,7 +36,7 @@ export default function Post() {
       redirect: "follow",
     };
 
-    fetch("http://localhost:1337/api/posts", requestOptions)
+    fetch("http://localhost:1337/api/posts/?populate=*", requestOptions)
       .then((response) => response.json())
       .then((result) => {
         console.log(result);
@@ -42,7 +45,7 @@ export default function Post() {
       .catch((error) => console.error(error));
   }, []);
 
-  console.log(post);
+  console.log(`post result : ${post}`);
 
   const handlepostdelete = (documentId) => {
     const myHeaders = new Headers();
@@ -54,32 +57,38 @@ export default function Post() {
       redirect: "follow",
     };
 
-    fetch(`http://localhost:1337/api/posts/${documentId}`, requestOptions)
+    fetch(
+      `http://localhost:1337/api/posts/${documentId}/?populate=*`,
+      requestOptions
+    )
       .then((response) => response.text())
       .then((result) => console.log(result))
       .catch((error) => console.error(error));
   };
 
-
-  
-   const handle_get_single_post_info=(documentId)=>{
-   setOpeninfo(true);
+  const handle_get_single_post_info = (documentId) => {
+    setOpeninfo(true);
     const myHeaders = new Headers();
-myHeaders.append("Authorization", `Bearer ${jwts}`);
+    myHeaders.append("Authorization", `Bearer ${jwts}`);
 
-const requestOptions = {
-  method: "GET",
-  headers: myHeaders,
-  redirect: "follow"
-};
+    const requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
 
-fetch(`http://localhost:1337/api/posts/${documentId}`, requestOptions)
-  .then((response) => response.json())
-  .then((result) => setsinglepostinfo(result.data))
-  .catch((error) => console.error(error));
-   }
+    fetch(
+      `http://localhost:1337/api/posts/${documentId}/?populate=*`,
+      requestOptions
+    )
+      .then((response) => response.json())
+      .then((result) => {
+        console.log(result.data);
 
-
+        setsinglepostinfo(result.data);
+      })
+      .catch((error) => console.error(error));
+  };
 
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
   return (
@@ -97,11 +106,18 @@ fetch(`http://localhost:1337/api/posts/${documentId}`, requestOptions)
       <div
         style={{
           width: "calc(100% - 20px)",
-          height: "80px",
+          height: "100px",
           padding: "10px",
           borderBottom: ".5px solid white ",
+          display:"flex",
+          overflow:"auto",
+          WebkitOverflowScrolling: 'touch', 
+          msOverflowStyle: 'none',
+          scrollbarWidth: 'none',
         }}
-      ></div>
+      >
+        <All_users/>
+      </div>
       <div
         style={{
           width: "100%",
@@ -126,7 +142,7 @@ fetch(`http://localhost:1337/api/posts/${documentId}`, requestOptions)
               flexDirection: "column",
               alignContent: "center",
               borderBottom: ".5px solid white ",
-              cursor:"pointer"
+              cursor: "pointer",
             }}
           >
             {console.log(p)}
@@ -138,38 +154,64 @@ fetch(`http://localhost:1337/api/posts/${documentId}`, requestOptions)
                 justifyContent: "space-between",
               }}
             >
-              <p style={{ color: "white " }}>{p.title}</p>
-              <div>
-                <Link to={"/editpost"}>
-                  <Button onClick={() => handledocid(p.documentId)}>
-                    <EditIcon sx={{ color: "white" }} />
-                  </Button>
-                </Link>
-
-                <Button onClick={() => handlepostdelete(p.documentId)}>
-                  <DeleteIcon sx={{ color: "red" }} />
-                </Button>
-
-              
-                  <Button onClick={()=>handle_get_single_post_info(p.documentId)}>
-                    <InfoOutlineIcon color="info"/>
-                </Button>
-           
-              
+              <div style={{ color: "white ", display: "flex", gap: "20px" }}>
+                <div>{p.user?.username}</div>
+                <div>{p.title}</div>
               </div>
+              <div>
+                {p.user.username === username && (
+                  <div>
+                    <Link to={"/editpost"}>
+                      <Button onClick={() => handledocid(p.documentId)}>
+                        <EditIcon sx={{ color: "white" }} />
+                      </Button>
+                    </Link>
 
+                    <Button onClick={() => handlepostdelete(p.documentId)}>
+                      <DeleteIcon sx={{ color: "red" }} />
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
-            <div style={{ backgroundColor: "white ", padding: "5px", }}>
+            <div style={{ backgroundColor: "white ", padding: "5px" }}>
               {p.content}
-              <PostInfo/>
+              <PostInfo />
             </div>
-            <div style={{ backgroundColor: "green ", padding: "5px",display:"flex",justifyContent:"space-between",flexDirection:"column",alignItems:"flex-start" }}>
-               <Checkbox
-               {...label}
-                icon={<FavoriteBorder />}
-                checkedIcon={<Favorite />}
-                
-              />
+            <div
+              style={{
+                backgroundColor: "green ",
+                padding: "5px",
+                display: "flex",
+                justifyContent: "space-between",
+                flexDirection: "column",
+                alignItems: "flex-start",
+              }}
+            >
+              <div
+                style={{ display: "flex", gap: "20px", alignItems: "center" }}
+              >
+                <div style={{ display: "flex", gap: "10px" }}>
+                  <Checkbox
+                    {...label}
+                    icon={<FavoriteBorder />}
+                    checkedIcon={<Favorite />}
+                  />
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      fontSize: "20px",
+                    }}
+                  >
+                    {p?.post_likes?.length || 0}
+                  </div>
+                </div>
+
+                <ChatBubbleOutlineIcon
+                  onClick={() => handle_get_single_post_info(p.documentId)}
+                />
+              </div>
               Comment section
             </div>
           </div>

@@ -1,5 +1,5 @@
 // import logo from './logo.svg';
-import { BrowserRouter as  Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./App.css";
 // import Index from "./Routes/Index";
 import Home from "./Pages/Home";
@@ -26,9 +26,10 @@ function App() {
     const handleClose = () => {
       setOpeninfo(false);
     }; 
-
+const[likecount,setlikecount]=useState()
+const[users,setusers]=useState()
   return (
-      <Context.Provider value={{ post, setpost,postform ,setpostform,handleOpen,handleClose,openinfo,setOpeninfo,singlepostinfo,setsinglepostinfo}}>
+      <Context.Provider value={{ post, setpost,postform ,setpostform,handleOpen,handleClose,openinfo,setOpeninfo,singlepostinfo,setsinglepostinfo,likecount,setlikecount,users,setusers}}>
        <Routes>
           <Route path='/' element={<Home/>}/>
           <Route path='/post' element={<Home/>}/>
