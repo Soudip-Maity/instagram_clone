@@ -1,157 +1,135 @@
-import React, { useContext, useState } from "react";
-import Sidenavbar from "./Sidenavbar";
-import Infobar from "./Infobar";
-import { Button, TextField } from "@mui/material";
-import Snackbar from "@mui/material/Snackbar";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
-import { Context } from "../App";
-import { useNavigate } from "react-router-dom";
+import * as React from "react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import Modal from "@mui/material/Modal";
+import TextField from "@mui/material/TextField";
+import AddBoxIcon from "@mui/icons-material/AddBox";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { useCreateNewPostMutation } from "../Redux/Services/Post";
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+  display: "flex",
+ flexDirection:"column",
+  gap: "20px",
+};
 
 export default function Createpost() {
-  const userid= localStorage.getItem("userid")
-        const {setpostform,postform,post,setpost}=useContext(Context)
-      const [open, setOpen] = React.useState(false);
-      const [error, seterror] = useState("");
-    
-    const token = localStorage.getItem("jwt")
-      const navigate = useNavigate();
-    
-      const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
+  const userid= parseInt(localStorage.getItem("userid"));
+  const [createNewPost]=useCreateNewPostMutation();
+  const [newPost, setNewPost] = React.useState({title: "", content: [],user:userid });
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+const handleCreatepost= async()=>{
+    if (!newPost.title.trim() || !newPost.content.trim()) {
+    alert("Title and content are required!");
+    return;
+  }
+
+  try {
+      // send newPost to API
+      await createNewPost(newPost).unwrap();
+      alert("Post created successfully!");
+      setNewPost({ user: userid, title: "", content: "" }); 
+      handleClose();
+    } catch (err) {
+      console.error("Failed to create post:", err);
+      alert("Error creating post");
     }
-    setOpen(false);
-  };
 
-    const action = (
-    <React.Fragment>
-      <Button color="secondary" size="small" onClick={handleClose}>
-        UNDO
-      </Button>
-      <IconButton
-        size="small"
-        aria-label="close"
-        color="inherit"
-        onClick={handleClose}
-      >
-        <CloseIcon fontSize="small" />
-      </IconButton>
-    </React.Fragment>
-  );
-
-const handlesetpost=(e)=>{
-    console.log(e);
-
-    console.log(e.target.name);
-
-    setpostform({ ...postform, [e.target.name]: e.target.value });
 }
 
-  const handlecreatepost = () => {
-    const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    myHeaders.append(
-      "Authorization",
-      `Bearer ${token}`
-    );
-
-    const raw = JSON.stringify({
-      data: {
-        user: userid,
-        title: postform.title,
-        content: postform.content,
-      },
-    });
-
-    const requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: raw,
-      redirect: "follow",
-    };
-
-    fetch("http://localhost:1337/api/posts", requestOptions)
-      .then((response) => response.json())
-      .then((result) =>{
-        console.log(result);
-        if (result.error) {
-          seterror(result.error.message);
-          setOpen(true);
-        } else{
-        console.log("Post created:", result);
-        setpostform({ title: "", content: "" }); 
-          navigate("/");
-        }
-      })
-      .catch((error) => {
-        seterror(error);
-        setOpen(true);
-      });
-  };
-
-
-//    .then((result) =>{
-//         console.log("Post created:", result);
-//         setpostform({ title: "", content: "" }); 
-//       })
+console.log(useCreateNewPostMutation());
+console.log(newPost)
   return (
-    <div style={{ display: "flex", boxSizing: "border-box" }}>
-      <Sidenavbar />
-
-      <div
-        style={{
-          display: "flex",
-          width: "65%",
-          height: "100vh",
-          backgroundColor: "black",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <div
-          style={{
-            backgroundColor: "whitesmoke",
-            width: "700px",
-            height: "600px",
-            borderRadius: "5px",
-            boxSizing: "border-box",
-            padding: "20px",
-            display: "flex",
-            flexDirection: "column",
+    <div>
+      <Button
+        onClick={handleOpen}
+        sx={{
+            color: "white ",
+               display: "flex",
             gap: "20px",
+            justifyContent:"flex-start",
+            paddingLeft:"1px",
+        
           }}
-        >
-               <Snackbar
-                          open={open}
-                          autoHideDuration={6000}
-                          onClose={handleClose}
-                          message={error}
-                          action={action}
-                        />
+      >
+        <AddBoxIcon />
+        Create
+      </Button>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
           <TextField
             size="small"
             label="Title"
-            //  sx={{backgroundColor:"rgb(54 54 54)",color:"white",borderRadius:"5px",}}
-            value={postform.title}
-             name="title"
-             onChange={handlesetpost}
+            value={newPost.title}
+       onChange={(e) =>setNewPost({ ...newPost, title: e.target.value })}
           />
-          <TextField
-            size="small"
-            label="Content"
-            value={postform.content}
-             name="content"
-             onChange={handlesetpost}
-            //    sx={{backgroundColor:"rgb(54 54 54)",color:"white",borderRadius:"5px",}}
+          <CKEditor
+            config={{
+              toolbar: [
+                "undo",
+                "redo",
+                "|",
+                "heading",
+                "|",
+                "bold",
+                "italic",
+                "underline",
+                "strikethrough",
+                "|",
+                "link",
+                "blockQuote",
+              ],
+              heading: {
+                options: [
+                  {
+                    model: "paragraph",
+                    title: "Paragraph",
+                    class: "ck-heading_paragraph",
+                  },
+                  {
+                    model: "heading1",
+                    view: "h1",
+                    title: "Heading 1",
+                    class: "ck-heading_heading1",
+                  },
+                  {
+                    model: "heading2",
+                    view: "h2",
+                    title: "Heading 2",
+                    class: "ck-heading_heading2",
+                  },
+                ],
+              },
+            }}
+            editor={ClassicEditor}
+            disableWatchdog={true} // prevents watchdog constructor error
+            data={newPost.content}
+            
+            onChange={(event,editor) =>{setNewPost({...newPost,content:editor.getData()})
+          console.log("editor.getdata()",editor);
+          
+          }}
           />
-
-
-          <Button variant="contained" onClick={handlecreatepost}>create</Button>
-        </div>
-      </div>
-
-      <Infobar />
+          <Button variant="contained" onClick={handleCreatepost}>create</Button>
+        </Box>
+      </Modal>
     </div>
   );
 }

@@ -10,87 +10,116 @@ import Checkbox from "@mui/material/Checkbox";
 import PostInfo from "./PostInfo";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import All_users from "../Layout/All_users";
+import { useGetAllPostsQuery } from "../Redux/Services/Post";
+
 export default function Post() {
   const jwts = localStorage.getItem("jwt");
   const username = localStorage.getItem("username");
+  const userDocid = localStorage.getItem("userDocid");
+  const postsdata = useGetAllPostsQuery();
+  console.log(postsdata);
+//   const { post, setpost, setOpeninfo, setsinglepostinfo ,singlepostinfo} = useContext(Context);
 
-  const { post, setpost, setOpeninfo, setsinglepostinfo } =
-    useContext(Context);
+//   useEffect(() => {
+//     console.log("post updated....");
+//   }, [post]);
 
-  useEffect(() => {
-    console.log("post updated....");
-  }, [post]);
+//   const handledocid = (documentId) => {
+//     localStorage.removeItem("Edit_documentId");
+//     localStorage.setItem("Edit_documentId", documentId);
+//   };
 
-  const handledocid = (documentId) => {
-    localStorage.removeItem("Edit_documentId");
-    localStorage.setItem("Edit_documentId", documentId);
-  };
+//   useEffect(() => {
+//     const myHeaders = new Headers();
+//     myHeaders.append("Authorization", `Bearer ${jwts}`);
 
-  useEffect(() => {
-    const myHeaders = new Headers();
-    myHeaders.append("Authorization", `Bearer ${jwts}`);
+//     const requestOptions = {
+//       method: "GET",
+//       headers: myHeaders,
+//       redirect: "follow",
+//     };
 
-    const requestOptions = {
-      method: "GET",
-      headers: myHeaders,
-      redirect: "follow",
-    };
+//     fetch("http://localhost:1337/api/posts/?populate=*", requestOptions)
+//       .then((response) => response.json())
+//       .then((result) => {
+//         console.log(result);
+//         setpost(result.data);
+//       })
+//       .catch((error) => console.error(error));
+//   }, []);
 
-    fetch("http://localhost:1337/api/posts/?populate=*", requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        console.log(result);
-        setpost(result.data);
-      })
-      .catch((error) => console.error(error));
-  }, []);
+//   console.log(`post result : ${post}`);
 
-  console.log(`post result : ${post}`);
+//   const handlepostdelete = (documentId) => {
+//     const myHeaders = new Headers();
+//     myHeaders.append("Authorization", `Bearer ${jwts}`);
 
-  const handlepostdelete = (documentId) => {
-    const myHeaders = new Headers();
-    myHeaders.append("Authorization", `Bearer ${jwts}`);
+//     const requestOptions = {
+//       method: "DELETE",
+//       headers: myHeaders,
+//       redirect: "follow",
+//     };
 
-    const requestOptions = {
-      method: "DELETE",
-      headers: myHeaders,
-      redirect: "follow",
-    };
+//     fetch(
+//       `http://localhost:1337/api/posts/${documentId}/?populate=*`,
+//       requestOptions
+//     )
+//       .then((response) => response.text())
+//       .then((result) => console.log(result))
+//       .catch((error) => console.error(error));
+//   };
 
-    fetch(
-      `http://localhost:1337/api/posts/${documentId}/?populate=*`,
-      requestOptions
-    )
-      .then((response) => response.text())
-      .then((result) => console.log(result))
-      .catch((error) => console.error(error));
-  };
+//   const handle_get_single_post_info = (documentId) => {
+//     setOpeninfo(true);
+//     const myHeaders = new Headers();
+//     myHeaders.append("Authorization", `Bearer ${jwts}`);
 
-  const handle_get_single_post_info = (documentId) => {
-    setOpeninfo(true);
-    const myHeaders = new Headers();
-    myHeaders.append("Authorization", `Bearer ${jwts}`);
+//     const requestOptions = {
+//       method: "GET",
+//       headers: myHeaders,
+//       redirect: "follow",
+//     };
 
-    const requestOptions = {
-      method: "GET",
-      headers: myHeaders,
-      redirect: "follow",
-    };
+//     fetch(
+//       `http://localhost:1337/api/posts/${documentId}/?populate=*`,
+//       requestOptions
+//     )
+//       .then((response) => response.json())
+//       .then((result) => {
+//         console.log(result.data);
 
-    fetch(
-      `http://localhost:1337/api/posts/${documentId}/?populate=*`,
-      requestOptions
-    )
-      .then((response) => response.json())
-      .then((result) => {
-        console.log(result.data);
-
-        setsinglepostinfo(result.data);
-      })
-      .catch((error) => console.error(error));
-  };
+//         setsinglepostinfo(result.data);
+//       })
+//       .catch((error) => console.error(error));
+//   };
 
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
+
+//   const handlelike = (documentId) => {
+//     const myHeaders = new Headers();
+//     myHeaders.append("Content-Type", "application/json");
+//     myHeaders.append("Authorization", `Bearer ${jwts}`);
+
+//     const raw = JSON.stringify({
+//       data: {
+//         post: documentId,
+//         user: userDocid,
+//       },
+//     });
+
+//     const requestOptions = {
+//       method: "POST",
+//       headers: myHeaders,
+//       body: raw,
+//       redirect: "follow",
+//     };
+
+//     fetch("http://localhost:1337/api/post-likes", requestOptions)
+//       .then((response) => response.text())
+//       .then((result) => console.log(result))
+//       .catch((error) => console.error(error));
+//   };
+
   return (
     <div
       style={{
@@ -109,14 +138,14 @@ export default function Post() {
           height: "100px",
           padding: "10px",
           borderBottom: ".5px solid white ",
-          display:"flex",
-          overflow:"auto",
-          WebkitOverflowScrolling: 'touch', 
-          msOverflowStyle: 'none',
-          scrollbarWidth: 'none',
+          display: "flex",
+          overflow: "auto",
+          WebkitOverflowScrolling: "touch",
+          msOverflowStyle: "none",
+          scrollbarWidth: "none",
         }}
       >
-        <All_users/>
+        <All_users />
       </div>
       <div
         style={{
@@ -132,7 +161,8 @@ export default function Post() {
           alignItems: "center",
         }}
       >
-        {post.map((p) => (
+        {postsdata.data.map((p) =>(
+          
           <div
             style={{
               border: "1px solid white ",
@@ -152,16 +182,18 @@ export default function Post() {
                 display: "flex ",
                 padding: "5px",
                 justifyContent: "space-between",
+                backgroundColor: "orange",
               }}
             >
               <div style={{ color: "white ", display: "flex", gap: "20px" }}>
+                {console.log("username post", p.user?.username)}
                 <div>{p.user?.username}</div>
                 <div>{p.title}</div>
               </div>
               <div>
-                {p.user.username === username && (
+                {p.user?.username === username && (
                   <div>
-                    <Link to={"/editpost"}>
+                    {/* <Link to={"/editpost"}>
                       <Button onClick={() => handledocid(p.documentId)}>
                         <EditIcon sx={{ color: "white" }} />
                       </Button>
@@ -169,7 +201,7 @@ export default function Post() {
 
                     <Button onClick={() => handlepostdelete(p.documentId)}>
                       <DeleteIcon sx={{ color: "red" }} />
-                    </Button>
+                    </Button> */}
                   </div>
                 )}
               </div>
@@ -192,11 +224,18 @@ export default function Post() {
                 style={{ display: "flex", gap: "20px", alignItems: "center" }}
               >
                 <div style={{ display: "flex", gap: "10px" }}>
-                  <Checkbox
-                    {...label}
-                    icon={<FavoriteBorder />}
-                    checkedIcon={<Favorite />}
-                  />
+                  <div>
+                    
+                    <Checkbox
+                      {...label}
+                      icon={<FavoriteBorder />}
+                      checkedIcon={<Favorite />}
+                    //   onClick={() => handlelike(p.documentId)}
+
+                    />
+                     
+                  
+                  </div>
                   <div
                     style={{
                       display: "flex",
@@ -206,10 +245,12 @@ export default function Post() {
                   >
                     {p?.post_likes?.length || 0}
                   </div>
+             
+
                 </div>
 
                 <ChatBubbleOutlineIcon
-                  onClick={() => handle_get_single_post_info(p.documentId)}
+                //   onClick={() => handle_get_single_post_info(p.documentId)}
                 />
               </div>
               Comment section

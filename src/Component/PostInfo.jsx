@@ -22,31 +22,37 @@ const style = {
 export default function PostInfo() {
   const { handleClose, openinfo, singlepostinfo,setlikecount } = React.useContext(Context);
   const jwts = localStorage.getItem("jwt");
+  const userDocid = localStorage.getItem("userDocid");
 
-  console.log(singlepostinfo);
+  console.log("soudip...",singlepostinfo);
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
   
 
-//   React.useEffect(()=>{
-//     const myHeaders = new Headers();
-// myHeaders.append("Authorization", `Bearer ${jwts}`);
+const handlelike=(documentId)=>{
+  const myHeaders = new Headers();
+myHeaders.append("Content-Type", "application/json");
+myHeaders.append("Authorization",  `Bearer ${jwts}`);
 
-// const raw = "";
+const raw = JSON.stringify({
+  "data": {
+    "post": documentId,
+    "user": userDocid
+  }
+});
 
-// const requestOptions = {
-//   method: "GET",
-//   headers: myHeaders,
-//   body: raw,
-//   redirect: "follow"
-// };
+const requestOptions = {
+  method: "POST",
+  headers: myHeaders,
+  body: raw,
+  redirect: "follow"
+};
 
-// fetch("http://localhost:1337/api/post-likes", requestOptions)
-//   .then((response) => response.json())
-//   .then((result) => {console.log(`likes.........: ${result.data}`)
-//     setlikecount(result.data)
-//   })
-//   .catch((error) => console.error(error));
-//   },[])
+fetch("http://localhost:1337/api/post-likes", requestOptions)
+  .then((response) => response.text())
+  .then((result) => console.log(result))
+  .catch((error) => console.error(error));
+}
+
 
   return (
     <div>
@@ -109,13 +115,17 @@ export default function PostInfo() {
             </div>
             <div>
                  <div style={{display:"flex",gap:"20px",alignItems:"center",py:"10px"}}>
+                  {singlepostinfo&&(
+                    <>
                                <Checkbox
                                {...label}
                                 icon={<FavoriteBorder />}
                                 checkedIcon={<Favorite />}
-                              
+                              onClick={()=>handlelike(singlepostinfo.documentId)}
                               />
                               <ChatBubbleOutlineIcon />
+                              </>
+                                      )}
                     </div>
                           <div style={{paddingLeft:"10px"}}>
                                 {singlepostinfo && (

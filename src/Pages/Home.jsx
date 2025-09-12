@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Sidenavbar from "../Component/Sidenavbar";
 import Post from "../Component/Post";
 import Infobar from "../Component/Infobar";
-
+import Post3 from "../Component/Post3";
 //  export const Context = createContext()
 
 export default function Home() {
@@ -30,7 +30,7 @@ export default function Home() {
     >
       <Sidenavbar />
 
-      <Post />
+      <Post3 />
 
      <Infobar/>
     </div>

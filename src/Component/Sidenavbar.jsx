@@ -4,11 +4,13 @@ import SearchIcon from "@mui/icons-material/Search";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
+import Createpost from "./Createpost";
+import ExploreIcon from '@mui/icons-material/Explore';
 // import BottomNavigation from '@mui/material/BottomNavigation';
 // import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 
 export default function Sidenavbar() {
-    // const [value, setValue] = React.useState(0);
+  // const [value, setValue] = React.useState(0);
   return (
     <div
       style={{
@@ -25,10 +27,26 @@ export default function Sidenavbar() {
         fontSize: "25px",
       }}
     >
-      <h4 style={{   background: "linear-gradient(45deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5)",
-    WebkitBackgroundClip: "text",
-    WebkitTextFillColor: "transparent",
-    fontWeight: "bold",}}> 𝓲𝓷𝓼𝓽𝓪𝓰𝓻𝓪𝓶</h4>
+      <div
+        style={{
+          display:"flex",
+          justifyContent:"center",
+   
+        }}
+      >
+       <img src="myAppLogo.png" alt="" style={{width:"100px",height:"100px"}} />
+       <h4   style={{
+          background:
+            "linear-gradient(45deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          fontWeight: "bold",
+          display:"flex",
+          justifyContent:"center",
+  
+        }}> ᏞᎥᏁᏦᏬᏢ</h4>
+    
+      </div>
 
       <div
         style={{
@@ -43,7 +61,7 @@ export default function Sidenavbar() {
           fontSize: "40px",
         }}
       >
-            {/* <BottomNavigation
+        {/* <BottomNavigation
             style={{display:"flex",justifyContent:"flex-start",flexDirection:"column",gap:"50px"}}
         showLabels
         value={value}
@@ -57,36 +75,79 @@ export default function Sidenavbar() {
         <BottomNavigationAction label="Create" icon={<AddBoxIcon  sx={{color:"white"}} fontsize="large" />} />
       </BottomNavigation> */}
 
-
-
-        <Link to={"/"} style={{textDecoration:"none",width:"100%"}}>
-        <Button  sx={{color:"white ",display:"flex",gap:"20px",width:"100%", transition: "background-color 0.3s ease ", '&:hover': {
-              color: 'white',          
-              backgroundColor: ' #565656ff',  
-            }}}> 
-          <HomeIcon sx={{color:"white"}} fontsize="large" />
-          Home
-        </Button>
+        <Link to={"/"} style={{ textDecoration: "none", width: "100%" }}>
+          <Button
+            sx={{
+              color: "white ",
+          display: "flex",
+            gap: "20px",
+            justifyContent:"flex-start",
+            paddingLeft:"25%",
+              width: "100%",
+              transition: "background-color 0.2s ease ",
+              "&:hover": {
+                color: "white",
+                backgroundColor: " #565656ff",
+              },
+            }}
+          >
+            <HomeIcon sx={{ color: "white" }} fontsize="large" />
+            Home
+          </Button>
         </Link>
-    
-        <Button  sx={{color:"white ",display:"flex",gap:"20px",width:"100%", transition: "background-color 0.3s ease ",  '&:hover': {
-              color: 'white',          
-              backgroundColor: ' #565656ff',  
-            }}}>
-          <SearchIcon sx={{color:"white"}} fontsize="large" />
+
+        <Button
+          sx={{
+            color: "white ",
+            display: "flex",
+            gap: "20px",
+            width: "100%",
+            transition: "background-color 0.2s ease ",
+            "&:hover": {
+              color: "white",
+              backgroundColor: " #565656ff",
+            },
+          }}
+        >
+          <SearchIcon sx={{ color: "white" }} fontsize="large" />
           search
         </Button>
 
-            <Link to={"/createpost"} style={{textDecoration:"none",width:"100%"}}>
-             <Button sx={{color:"white ",display:"flex",gap:"20px",width:"100%", transition: "background-color 0.3s ease ",  '&:hover': {
-              color: 'white',          
-              backgroundColor: ' #565656ff',  
-            }}}>
-          <AddBoxIcon sx={{color:"white"}} fontsize="large" />
-          create
+
+        <Button   sx={{
+            color: "white ",
+            display: "flex",
+            gap: "20px",
+            width: "100%",
+         
+            transition: "background-color 0.2s ease ",
+            "&:hover": {
+              color: "white",
+              backgroundColor: " #565656ff",
+            },
+          }}>
+           <Createpost />
+
         </Button>
-        </Link>
-       
+          <Link to={"/explore"} style={{ textDecoration: "none", width: "100%" }}>
+        <Button   sx={{
+            color: "white ",
+            display: "flex",
+            gap: "20px",
+            width: "100%",
+ 
+            transition: "background-color 0.2s ease ",
+            "&:hover": {
+              color: "white",
+              backgroundColor: " #565656ff",
+            },
+          }}>
+           <ExploreIcon sx={{ color: "white" }} fontsize="large"  />
+            Explore
+        </Button>
+          </Link>
+  
+ 
       </div>
     </div>
   );

@@ -1,173 +1,122 @@
-import React, { useContext, useEffect, useState } from "react";
-import Sidenavbar from "./Sidenavbar";
-import Infobar from "./Infobar";
-import Snackbar from "@mui/material/Snackbar";
-import IconButton from "@mui/material/IconButton";
+import React, { useState } from "react";
+import { Button, TextField, Snackbar, IconButton, Modal } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { Button, TextField } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { Context } from "../App";
+import EditIcon from "@mui/icons-material/Edit";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { useEditPostsMutation } from "../Redux/Services/Post";
 
-export default function Editpost() {
-    const documentId= localStorage.getItem("Edit_documentId")
-        const {post,}=useContext(Context)
-  const[editpostfrom,seteditpostfrom]=useState({
-      title: "",
-      content: ""
-    })
-  const [open, setOpen] = React.useState(false);
-      const [error, seterror] = useState("");
-    
-    const token = localStorage.getItem("jwt")
-      const navigate = useNavigate();
+const modalStyle = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  borderRadius: "8px",
+  boxShadow: 24,
+  p: 4,
+};
 
-useEffect(() => {
-  const currentPost = post.find((p) => p.documentId === documentId);
-  if (currentPost) {
-    seteditpostfrom({
-      title: currentPost.title,
-      content: currentPost.content,
-    });
-  }
-}, [documentId, post,seteditpostfrom]);
+export default function Editpost({ post }) {
+  const userid = localStorage.getItem("userid");
+  const [openModal, setOpenModal] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [error, setError] = useState("");
 
+  
+  const [editData, setEditData] = useState({
+    title: post?.title || "",
+    content: post?.content || "",
+    user: userid,
+  });
+console.log("pagla",useEditPostsMutation());
 
+  
+  const [editPostApi, { isLoading }] = useEditPostsMutation();
 
+  const handleChange = (e) => {
+    setEditData({ ...editData, [e.target.name]: e.target.value });
+  };
 
-    
-      const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
+  const handleEditorChange = (event, editor) => {
+    setEditData({ ...editData, content: editor.getData() });
+  };
+
+const handleUpdate = async () => {
+  try {
+    const documentId = localStorage.getItem("Edit_documentId");
+    if (!documentId) {
+      setError("Post ID missing!");
+      setOpenSnackbar(true);
       return;
     }
-    setOpen(false);
-  };
 
-    const action = (
-    <React.Fragment>
-      <Button color="secondary" size="small" onClick={handleClose}>
-        UNDO
-      </Button>
-      <IconButton
-        size="small"
-        aria-label="close"
-        color="inherit"
-        onClick={handleClose}
-      >
-        <CloseIcon fontSize="small" />
-      </IconButton>
-    </React.Fragment>
-  );
+    await editPostApi({ documentId, editpost: editData }); 
+    setOpenModal(false);
+  } catch (err) {
+    console.error("Update failed:", err);
+    setError("Failed to update post");
+    setOpenSnackbar(true);
+  }
+};
 
-
-const handlesetpost=(e)=>{
-    console.log(e);
-
-    console.log(e.target.name);
-
-    seteditpostfrom({ ...editpostfrom, [e.target.name]: e.target.value });
-}
-
-
-
-  const handlepostedit = (documentId) => {
-    const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    myHeaders.append("Authorization", `Bearer ${token}`);
-
-    const raw = JSON.stringify({
-      data: {
-        user: 2,
-        title: editpostfrom.title,
-        content: editpostfrom.content,
-      },
-    });
-
-    const requestOptions = {
-      method: "PUT",
-      headers: myHeaders,
-      body: raw,
-      redirect: "follow",
-    };
-
-    fetch(
-    `  http://localhost:1337/api/posts/${documentId}`,
-      requestOptions
-    )
-      .then((response) => response.json())
-      .then((result) =>{ if (result.error) {
-          seterror(result.error.message);
-          setOpen(true);
-        } else{
-            console.log(result)
-        seteditpostfrom({ title: "", content: "" }); 
-
-           navigate("/");
-        }})
-      .catch((error) => {
-        seterror(error);
-        setOpen(true);
-      });
-  };
 
   return (
-    <div style={{ display: "flex", boxSizing: "border-box" }}>
-      <Sidenavbar />
+    <>
+  
+     <Button
+  onClick={() => {
+    localStorage.setItem("Edit_documentId", post.documentId); 
+    setOpenModal(true);
+  }}
+>
+  <EditIcon sx={{ color: "white" }} />
+</Button>
 
-      <div
-        style={{
-          display: "flex",
-          width: "65%",
-          height: "100vh",
-          backgroundColor: "black",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <div
-          style={{
-            backgroundColor: "whitesmoke",
-            width: "700px",
-            height: "600px",
-            borderRadius: "5px",
-            boxSizing: "border-box",
-            padding: "20px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "20px",
-          }}
-        >
+
+   
+      <Modal open={openModal} onClose={() => setOpenModal(false)}>
+        <div style={modalStyle}>
           <Snackbar
-            open={open}
-            autoHideDuration={6000}
-            onClose={handleClose}
+            open={openSnackbar}
+            autoHideDuration={4000}
+            onClose={() => setOpenSnackbar(false)}
             message={error}
-            action={action}
+            action={
+              <IconButton size="small" color="inherit" onClick={() => setOpenSnackbar(false)}>
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            }
           />
+
           <TextField
             size="small"
             label="Title"
-            value={editpostfrom.title}
+            fullWidth
+            value={editData.title}
             name="title"
-            onChange={handlesetpost}
+            onChange={handleChange}
           />
-          <TextField
-            size="small"
-            label="Content"
-            value={editpostfrom.content}
-            name="content"
-            onChange={handlesetpost}
+
+          <CKEditor
+            editor={ClassicEditor}
+            data={editData.content}
+            onChange={handleEditorChange}
           />
 
           <Button
             variant="contained"
-            onClick={() => handlepostedit(documentId)}
+            color="primary"
+            fullWidth
+            onClick={handleUpdate}
+            disabled={isLoading}
+            sx={{ mt: 2 }}
           >
-            update
+            {isLoading ? "Updating..." : "Update"}
           </Button>
         </div>
-      </div>
-
-      <Infobar />
-    </div>
+      </Modal>
+    </>
   );
 }

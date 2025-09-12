@@ -84,6 +84,7 @@ export default function Loginpage() {
           localStorage.setItem("jwt", result.jwt);
           localStorage.setItem("username", result.user.username);
           localStorage.setItem("userid", result.user.id);
+          localStorage.setItem("userDocid", result.user.documentId);
           navigate("/");
         }
       })
