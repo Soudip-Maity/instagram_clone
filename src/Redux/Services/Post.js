@@ -1,46 +1,51 @@
-// Need to use the React-specific entry point to import createApi
-
+// Redux/Services/Post.js
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-// const userdocId= localStorage.getItem("userdocId")
 
-// Define a service using a base URL and expected endpoints
 export const postApi = createApi({
   reducerPath: "postApi",
   baseQuery: fetchBaseQuery({
     baseUrl: "http://localhost:1337/api/",
-
-    prepareHeaders: (headers, { getState }) => {
+    prepareHeaders: (headers) => {
       const token = localStorage.getItem("jwt");
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
-      }
-
+      if (token) headers.set("Authorization", `Bearer ${token}`);
       return headers;
     },
   }),
-
-  tagTypes: ["Post", "user"],
-
+  tagTypes: ["Post", "User"],
   endpoints: (builder) => ({
     getAllPosts: builder.query({
-      query: (token) => "posts/?populate=*",
-      providesTags: ["Post"],
+      query: () => "posts?populate=*",
+      // provide tags for each post and a LIST tag to invalidate whole list
+      providesTags: (result) =>
+        result?.data
+          ? [
+              ...result.data.map((post) => ({ type: "Post", id: post.id })),
+              { type: "Post", id: "LIST" },
+            ]
+          : [{ type: "Post", id: "LIST" }],
     }),
-    getAllusers: builder.query({
-      query: (token) => "users/?populate=*",
-      providesTags: ["user"],
+    getAllUsers: builder.query({
+      query: () => "users?populate=*",
+      providesTags: (result) =>
+        result?.data
+          ? [
+              ...result.data.map((u) => ({ type: "User", id: u.id })),
+              { type: "User", id: "LIST" },
+            ]
+          : [{ type: "User", id: "LIST" }],
     }),
     getSingleUser: builder.query({
       query: (id) => `users/${id}?populate=*`,
-      providesTags: ["User"],
+      providesTags: (result, error, id) => [{ type: "User", id }],
     }),
+
     createNewPost: builder.mutation({
       query: (newPost) => ({
         url: "posts",
         method: "POST",
         body: {
           data: {
-            user:newPost.user ,
+            user: newPost.user,
             title: newPost.title,
             content: [
               {
@@ -51,47 +56,114 @@ export const postApi = createApi({
           },
         },
       }),
-      invalidatesTags: ["Post"],
+      invalidatesTags: [{ type: "Post", id: "LIST" }],
+    }),
+  
+
+
+    editPosts: builder.mutation({
+      query: ({ documentId, editpost }) => ({
+        url: `posts/${documentId}`,
+        method: "PUT",
+        body: {
+          data: {
+            user: editpost.user || "",
+            title: editpost.title,
+            content: [
+              {
+                type: "paragraph",
+                children: [{ type: "text", text: editpost.content, bold: true }],
+              },
+            ],
+          },
+        },
+      }), 
+      invalidatesTags: (result, error, { documentId }) => [
+        { type: "Post", id: documentId },
+        { type: "Post", id: "LIST" },
+      ],
     }),
 
-editPosts: builder.mutation({
-  query: ({ documentId, editpost }) => ({
-    url: `posts/${documentId}`,   
-    method: "PUT",
+    editProfile: builder.mutation({
+      query: ({ userid, editProfile }) => ({
+        url: `users/${userid}`,
+        method: "PUT",
+        body: {
+             username:editProfile.username || "",
+             email: editProfile.email,
+             password: editProfile.password
+        },
+      }), 
+   
+    }),
+  
+
+
+    deletePost: builder.mutation({
+      query: (id) => ({
+        url: `posts/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: (result, error, id) => [
+        { type: "Post", id },
+        { type: "Post", id: "LIST" },
+      ],
+    }), 
+
+
+    addComments: builder.mutation({
+      query: (id) => ({
+        url: `comments`,
+        method: "POST",
+        body: {
+
+        }
+      }),
+    }),
+
+    // Redux/Services/Post.js
+
+addLike: builder.mutation({
+  query: ({ postId, userId }) => ({
+    url: "likes",
+    method: "POST",
     body: {
       data: {
-        user: editpost.user || "",
-        title: editpost.title,
-        content: [
-          {
-            type: "paragraph",
-            children: [{ type: "text", text: editpost.content, bold: true }],
-          },
-        ],
+        post: postId,
+        user: userId,
       },
     },
   }),
-  invalidatesTags: ["Post"],
+  invalidatesTags: (r, e, { postId }) => [
+    { type: "Post", id: postId },
+    { type: "Post", id: "LIST" },
+  ],
 }),
 
-deletePost: builder.mutation({
-  query: (id) => ({
-    url: `posts/${id}`,
+removeLike: builder.mutation({
+  query: (likeId) => ({
+    url: `likes/${likeId}`,
     method: "DELETE",
   }),
-  invalidatesTags: ["Post"],
+  invalidatesTags: [{ type: "Post", id: "LIST" }],
 }),
 
-  }),
-}); 
 
-// Export hooks for usage in functional components, which are
-// auto-generated based on the defined endpoints
+
+
+
+  }),
+});
+
 export const {
   useGetAllPostsQuery,
-  useGetAllusersQuery,
+  useGetAllUsersQuery,
   useGetSingleUserQuery,
   useCreateNewPostMutation,
   useEditPostsMutation,
-  useDeletePostMutation
+  useDeletePostMutation,
+  useEditProfileMutation,
+  useAddCommentsMutation,
+  useAddLikeMutation,
+  useRemoveLikeMutation,
 } = postApi;

@@ -1,135 +1,106 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { useCreateNewPostMutation } from "../Redux/Services/Post";
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-  display: "flex",
- flexDirection:"column",
-  gap: "20px",
-};
 
-export default function Createpost() {
-  const userid= parseInt(localStorage.getItem("userid"));
-  const [createNewPost]=useCreateNewPostMutation();
-  const [newPost, setNewPost] = React.useState({title: "", content: [],user:userid });
+export default function Createpost({ darkMode }) {
+  const userid = parseInt(localStorage.getItem("userid"));
+  const [createNewPost] = useCreateNewPostMutation();
+
   const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const [newPost, setNewPost] = React.useState({
+    title: "",
+    content: "",
+    user: userid,
+  });
 
-const handleCreatepost= async()=>{
+  const textColor = darkMode ? "#fff" : "#000";
+  const bgColor = darkMode ? "#121212" : "#fff";
+  const hoverBg = darkMode ? "#2a2a2a" : "#e0e0e0";
+
+  const handleCreatepost = async () => {
     if (!newPost.title.trim() || !newPost.content.trim()) {
-    alert("Title and content are required!");
-    return;
-  }
-
-  try {
-      // send newPost to API
-      await createNewPost(newPost).unwrap();
-      alert("Post created successfully!");
-      setNewPost({ user: userid, title: "", content: "" }); 
-      handleClose();
-    } catch (err) {
-      console.error("Failed to create post:", err);
-      alert("Error creating post");
+      alert("Title and content are required!");
+      return;
     }
 
-}
+    try {
+      await createNewPost(newPost).unwrap();
+      alert("Post created successfully!");
+      setNewPost({ title: "", content: "", user: userid });
+      setOpen(false);
+    } catch (err) {
+      alert("Error creating post");
+    }
+  };
 
-console.log(useCreateNewPostMutation());
-console.log(newPost)
   return (
-    <div>
+    <>
+      {/* CREATE BUTTON */}
       <Button
-        onClick={handleOpen}
+        onClick={() => setOpen(true)}
+        fullWidth
         sx={{
-            color: "white ",
-               display: "flex",
-            gap: "20px",
-            justifyContent:"flex-start",
-            paddingLeft:"1px",
-        
-          }}
+          color: textColor,
+          justifyContent: "flex-start",
+          gap: "15px",
+          padding: "10px 10px",
+          
+          "&:hover": { backgroundColor: hoverBg },
+        }}
       >
         <AddBoxIcon />
         Create
       </Button>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
+
+      {/* MODAL */}
+      <Modal open={open} onClose={() => setOpen(false)}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 500,
+            bgcolor: bgColor,
+            color: textColor,
+            boxShadow: 24,
+            p: 3,
+            borderRadius: "10px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "15px",
+          }}
+        >
           <TextField
             size="small"
             label="Title"
             value={newPost.title}
-       onChange={(e) =>setNewPost({ ...newPost, title: e.target.value })}
+            onChange={(e) =>
+              setNewPost({ ...newPost, title: e.target.value })
+            }
+            InputLabelProps={{ style: { color: textColor } }}
+            InputProps={{ style: { color: textColor } }}
           />
+
           <CKEditor
-            config={{
-              toolbar: [
-                "undo",
-                "redo",
-                "|",
-                "heading",
-                "|",
-                "bold",
-                "italic",
-                "underline",
-                "strikethrough",
-                "|",
-                "link",
-                "blockQuote",
-              ],
-              heading: {
-                options: [
-                  {
-                    model: "paragraph",
-                    title: "Paragraph",
-                    class: "ck-heading_paragraph",
-                  },
-                  {
-                    model: "heading1",
-                    view: "h1",
-                    title: "Heading 1",
-                    class: "ck-heading_heading1",
-                  },
-                  {
-                    model: "heading2",
-                    view: "h2",
-                    title: "Heading 2",
-                    class: "ck-heading_heading2",
-                  },
-                ],
-              },
-            }}
             editor={ClassicEditor}
-            disableWatchdog={true} // prevents watchdog constructor error
             data={newPost.content}
-            
-            onChange={(event,editor) =>{setNewPost({...newPost,content:editor.getData()})
-          console.log("editor.getdata()",editor);
-          
-          }}
+            onChange={(e, editor) =>
+              setNewPost({ ...newPost, content: editor.getData() })
+            }
           />
-          <Button variant="contained" onClick={handleCreatepost}>create</Button>
+
+          <Button variant="contained" onClick={handleCreatepost}>
+            Create
+          </Button>
         </Box>
       </Modal>
-    </div>
+    </>
   );
 }

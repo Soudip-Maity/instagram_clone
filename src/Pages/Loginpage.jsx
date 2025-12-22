@@ -130,7 +130,7 @@ export default function Loginpage() {
             width: "100%",
           }}
         >
-          𝓲𝓷𝓼𝓽𝓪𝓰𝓻𝓪𝓶
+       ᏞᎥᏁᏦᏬᏢ
         </h1>
         <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
           <div>

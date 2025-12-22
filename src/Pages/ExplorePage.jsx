@@ -1,7 +1,7 @@
 import React from "react";
 import Sidenavbar from "../Component/Sidenavbar";
 import Infobar from "../Component/Infobar";
-import { useGetAllusersQuery } from "../Redux/Services/Post";
+import { useGetAllUsersQuery } from "../Redux/Services/Post";
 import LoadingPage from "./LoadingPage";
 import ErrorPage from "./ErrorPage";
 import { Link } from "react-router-dom";
@@ -10,7 +10,7 @@ export default function ExplorePage() {
     data: userData,
     isLoading: userLoading,
     isError: userError,
-  } = useGetAllusersQuery();
+  } = useGetAllUsersQuery();
   const allusers = userData?.data || [];
   console.log(allusers);
   

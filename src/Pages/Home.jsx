@@ -1,51 +1,39 @@
-// import { Button } from "@mui/material";
-import React, { createContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidenavbar from "../Component/Sidenavbar";
-import Post from "../Component/Post";
-import Infobar from "../Component/Infobar";
 import Post3 from "../Component/Post3";
-//  export const Context = createContext()
+import Infobar from "../Component/Infobar";
 
 export default function Home() {
-
-
-
   const jwts = localStorage.getItem("jwt");
   const navigate = useNavigate();
+
+  const [darkMode, setDarkMode] = useState(
+    () => localStorage.getItem("theme") !== "light"
+  );
+
   useEffect(() => {
     if (!jwts) navigate("/login");
-  }, []);
- 
-  return (
+  }, [jwts, navigate]);
 
+  useEffect(() => {
+    localStorage.setItem("theme", darkMode ? "dark" : "light");
+  }, [darkMode]);
+
+  return (
     <div
       style={{
-        boxSizing: "border-box",
         display: "flex",
-        width: "100%",
+        width: "100vw",
         height: "100vh",
-        backgroundColor: "black ",
+        overflow: "hidden",
+        backgroundColor: darkMode ? "#000" : "#fff",
+        color: darkMode ? "#fff" : "#000",
       }}
     >
-      <Sidenavbar />
-
-      <Post3 />
-
-     <Infobar/>
+      <Sidenavbar darkMode={darkMode} />
+      <Post3 darkMode={darkMode} />
+      <Infobar darkMode={darkMode} setDarkMode={setDarkMode} />
     </div>
-
   );
 }
-
-
-
-// React.useEffect(() => {
-//   fetch(
-//     "http://localhost:1337/api/posts?populate[user][populate]=*&populate[tags][populate]=*&&populate[post_likes][populate]=*"
-//   )
-//     .then((r) => r.json())
-//     .then((data) => {
-//       console.log(data);
-//     });
-// }, []);

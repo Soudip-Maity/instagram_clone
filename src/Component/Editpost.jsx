@@ -6,16 +6,20 @@ import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { useEditPostsMutation } from "../Redux/Services/Post";
 
+
 const modalStyle = {
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: 400,
-  bgcolor: "background.paper",
+  backgroundColor:"white",
   borderRadius: "8px",
   boxShadow: 24,
-  p: 4,
+  padding: "10px",
+  display:"flex",
+  flexDirection:"column",
+  gap:"20px"
 };
 
 export default function Editpost({ post }) {
@@ -40,7 +44,11 @@ console.log("pagla",useEditPostsMutation());
   };
 
   const handleEditorChange = (event, editor) => {
-    setEditData({ ...editData, content: editor.getData() });
+    const data = editor.getData();
+    setEditData((prev) => ({
+      ...prev,
+      content: data, 
+    }));
   };
 
 const handleUpdate = async () => {
@@ -65,9 +73,14 @@ const handleUpdate = async () => {
   return (
     <>
   
-     <Button
+   <Button
   onClick={() => {
     localStorage.setItem("Edit_documentId", post.documentId); 
+    setEditData({
+      title: post?.title || "",
+      content: post?.content || "",
+      user: userid,
+    });
     setOpenModal(true);
   }}
 >
@@ -77,7 +90,7 @@ const handleUpdate = async () => {
 
    
       <Modal open={openModal} onClose={() => setOpenModal(false)}>
-        <div style={modalStyle}>
+        <div style={modalStyle} >
           <Snackbar
             open={openSnackbar}
             autoHideDuration={4000}
@@ -99,11 +112,21 @@ const handleUpdate = async () => {
             onChange={handleChange}
           />
 
-          <CKEditor
-            editor={ClassicEditor}
-            data={editData.content}
-            onChange={handleEditorChange}
-          />
+         <CKEditor
+  editor={ClassicEditor}
+  data={
+    Array.isArray(post?.content)
+      ? post.content
+          .map((block) =>
+            block.children?.map((child) => child.text).join(" ")
+          )
+          .join("\n")
+      : post?.content || ""
+  }
+  onChange={handleEditorChange}
+/>
+
+
 
           <Button
             variant="contained"

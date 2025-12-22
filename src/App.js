@@ -15,6 +15,7 @@ import ErrorPage from "./Pages/ErrorPage";
 import Userprofile from "./Pages/Userprofile";
 import Classcomp from "./Component/Classcomp";
 import ExplorePage from "./Pages/ExplorePage";
+import Game from "./Component/Game"
 export const Context = createContext();
 
 function App() {
@@ -45,6 +46,7 @@ function App() {
       <Route path="/editpost" element={<Editpost />} />
       <Route path= "/user/:id" element={< Userprofile/>} />
       <Route path= "/explore" element={< ExplorePage/>} />
+      <Route path="/game" element={<Game />} />
     </Routes>
   );
 }

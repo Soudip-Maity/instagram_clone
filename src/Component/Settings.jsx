@@ -1,44 +1,55 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
-import SettingsIcon from '@mui/icons-material/Settings';
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-};
+import * as React from "react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Modal from "@mui/material/Modal";
+import SettingsIcon from "@mui/icons-material/Settings";
+import EditUsers from "./EditUsers";
 
-export default function Settings() {
+export default function Settings({ darkMode }) {
   const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+
+  const textColor = darkMode ? "#fff" : "#000";
+  const bgColor = darkMode ? "#121212" : "#fff";
+  const hoverBg = darkMode ? "#2a2a2a" : "#e0e0e0";
 
   return (
-    <div>
-      <Button onClick={handleOpen} sx={{textTransform: 'none',color:"white",display:"flex",gap:"20px",
-              transition: "background-color 0.2s ease ",
-              "&:hover": {
-                color: "white",
-                backgroundColor: " #565656ff",
-              },}}><SettingsIcon/>Settings</Button>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
+    <>
+      {/* SETTINGS BUTTON */}
+      <Button
+        onClick={() => setOpen(true)}
+        fullWidth
+        sx={{
+          color: textColor,
+          justifyContent: "flex-start",
+          gap: "15px",
+          padding: "10px 12px",
+          textTransform: "none",
+          "&:hover": { backgroundColor: hoverBg },
+        }}
       >
-        <Box sx={style}>
-       Edit profile
+        <SettingsIcon />
+        Settings
+      </Button>
+
+      {/* MODAL */}
+      <Modal open={open} onClose={() => setOpen(false)}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: bgColor,
+            color: textColor,
+            boxShadow: 24,
+            p: 3,
+            borderRadius: "10px",
+          }}
+        >
+          <EditUsers />
         </Box>
       </Modal>
-    </div>
+    </>
   );
 }
