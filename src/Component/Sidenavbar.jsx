@@ -64,7 +64,20 @@ export default function Sidenavbar({ darkMode }) {
             overflow: "hidden",
           }}
         >
-          <h3 style={{ color: textColor }}>ᏞᎥᏁᏦᏬᏢ</h3>
+          <h3
+            style={{
+              background: "linear-gradient(45deg, #9B5DE0, #D78FEE)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              fontSize: "24px",
+              fontWeight: "bold",
+              margin: 0,
+              cursor:"pointer"
+            }}
+              onClick={() => window.location.reload()} 
+          >
+            ᏞᎥᏁᏦᏬᏢ
+          </h3>
 
           <Link to="/" style={{ textDecoration: "none" }}>
             <Button fullWidth sx={btn(textColor, hoverBg)}>
@@ -72,7 +85,11 @@ export default function Sidenavbar({ darkMode }) {
             </Button>
           </Link>
 
-          <Button fullWidth sx={btn(textColor, hoverBg)} onClick={() => setSearchOpen(true)}>
+          <Button
+            fullWidth
+            sx={btn(textColor, hoverBg)}
+            onClick={() => setSearchOpen(true)}
+          >
             <SearchIcon /> Search
           </Button>
 

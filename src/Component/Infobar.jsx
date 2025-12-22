@@ -39,7 +39,7 @@ export default function Infobar({ darkMode, setDarkMode }) {
     if (msg.includes("contact")) return "You can contact us through the contact page or feedback form. We'd love to hear from you!";
 
     // Friendly conversation
-    if (msg.includes("hello") || msg.includes("hi")) return "Hello! How's your day going? 😊";
+    if (msg.includes("hello") || msg.includes("hi")|| msg.includes("hay")) return "Hello! How's your day going? 😊";
     if (msg.includes("how are you")) return "I'm just a friendly bot, always ready to help you!";
     if (msg.includes("thanks") || msg.includes("thank you")) return "You're welcome! Glad I could help!";
     if (msg.includes("bye") || msg.includes("see you")) return "Goodbye! Have a wonderful day! 🌟";

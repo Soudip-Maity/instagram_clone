@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 /* ---------- Square ---------- */
 function Square({ value, onSquareClick }) {
@@ -29,18 +29,37 @@ function Square({ value, onSquareClick }) {
 /* ---------- Game ---------- */
 export default function Game() {
   const [squares, setSquares] = useState(Array(9).fill(null));
-  const [xIsNext, setXIsNext] = useState(true);
+  const [xIsNext, setXIsNext] = useState(true); // true = human X, false = bot O
 
   const winner = calculateWinner(squares);
   const isDraw = !winner && squares.every(Boolean);
 
+  // Bot move effect
+  useEffect(() => {
+    if (!xIsNext && !winner) {
+      const emptyIndices = squares
+        .map((val, idx) => (val === null ? idx : null))
+        .filter((val) => val !== null);
+
+      if (emptyIndices.length > 0) {
+        const randomIndex =
+          emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+
+        const nextSquares = squares.slice();
+        nextSquares[randomIndex] = "O";
+        setSquares(nextSquares);
+        setXIsNext(true);
+      }
+    }
+  }, [xIsNext, squares, winner]);
+
   function handleClick(i) {
-    if (winner || squares[i]) return;
+    if (winner || squares[i] || !xIsNext) return;
 
     const nextSquares = squares.slice();
-    nextSquares[i] = xIsNext ? "X" : "O";
+    nextSquares[i] = "X";
     setSquares(nextSquares);
-    setXIsNext(!xIsNext);
+    setXIsNext(false);
   }
 
   function resetGame() {
@@ -54,7 +73,7 @@ export default function Game() {
   } else if (isDraw) {
     status = "🤝 Match Draw";
   } else {
-    status = `Next Player: ${xIsNext ? "X" : "O"}`;
+    status = `Next Player: ${xIsNext ? "X (You)" : "O (Bot)"}`;
   }
 
   return (

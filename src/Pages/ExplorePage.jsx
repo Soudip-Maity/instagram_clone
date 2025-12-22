@@ -5,74 +5,96 @@ import { useGetAllUsersQuery } from "../Redux/Services/Post";
 import LoadingPage from "./LoadingPage";
 import ErrorPage from "./ErrorPage";
 import { Link } from "react-router-dom";
+
 export default function ExplorePage() {
-  const {
-    data: userData,
-    isLoading: userLoading,
-    isError: userError,
-  } = useGetAllUsersQuery();
-  const allusers = userData?.data || [];
-  console.log(allusers);
-  
-  if (userLoading) return <LoadingPage />;
-  if (userError) return <ErrorPage />;
+  const darkMode = localStorage.getItem("theme") !== "light";
+
+  // ✅ SAME AS Post3 (IMPORTANT)
+  const { data: userData, isLoading, isError } = useGetAllUsersQuery();
+
+  if (isLoading) return <LoadingPage />;
+  if (isError) return <ErrorPage />;
+
   return (
-    <div style={{ display: "flex" }}>
-      <Sidenavbar />
+    <div
+      style={{
+        display: "flex",
+        width: "100vw",
+        height: "100vh",
+        overflow: "hidden",
+        backgroundColor: darkMode ? "#000" : "#fff",
+      }}
+    >
+      <Sidenavbar darkMode={darkMode} />
+
+      {/* EXPLORE CONTENT */}
       <div
         style={{
-          boxSizing: "border-box",
           width: "65%",
           height: "100vh",
-          backgroundColor: "black",
-          overflow: "auto",
-          display: "flex",
-          flexDirection: "column",
-          gap: "20px",
-          WebkitOverflowScrolling: "touch",
-          msOverflowStyle: "none",
-          scrollbarWidth: "none",
           padding: "20px",
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "20px",
+          overflowY: "auto",
+          backgroundColor: darkMode ? "#0f0f0f" : "#fafafa",
+          scrollbarWidth: "none",
         }}
       >
         {userData?.map((u) => (
-          <Link to={`/user/${u.id}`} style={{ textDecoration: "none" }}>
-            <div
-              key={u.id}
-              style={{
-                background: "linear-gradient(45deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5)",
-                borderRadius: "50%",
-                display: "flex",
-                boxSizing: "border-box",
-                overflow: "auto",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "80px",
-                width: "80px",
-                cursor: "pointer",
-              }}
-            >
+          <Link
+            key={u.id}
+            to={`/user/${u.id}`}
+            style={{ textDecoration: "none" }}
+            onClick={() => localStorage.setItem("userdocId", u.id)}
+          >
+            <div style={{ textAlign: "center" }}>
               <div
                 style={{
+                  width: "90px",
+                  height: "90px",
                   borderRadius: "50%",
+                  background:
+                    "linear-gradient(45deg, #9B5DE0, #D78FEE,#4f5bd5)",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                  height: "70px",
-                  width: "70px",
-                  backgroundColor: "white",
-                  overflow: "hidden",
-                  color: "black",
                 }}
-                onClick={() => localStorage.setItem("userdocId", u.id)}
+              >
+                <div
+                  style={{
+                    width: "80px",
+                    height: "80px",
+                    borderRadius: "50%",
+                    backgroundColor: "#fff",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    fontSize: "16px",
+                    fontWeight: "bold",
+                    color: "#000",
+                    overflow:"hidden"
+                  }}
+                >
+                  {u.username}
+                </div>
+              </div>
+
+              <span
+                style={{
+                  marginTop: "6px",
+                  display: "block",
+                  color: darkMode ? "#fff" : "#000",
+                }}
               >
                 {u.username}
-              </div>
+              </span>
             </div>
           </Link>
         ))}
       </div>
-      <Infobar />
+
+      <Infobar darkMode={darkMode} />
     </div>
   );
 }
